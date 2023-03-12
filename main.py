@@ -131,24 +131,6 @@ def login():
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
 
-@app.route('/adding_job', methods=['GET', 'POST'])
-def adding_job():
-    form = AddJobForm()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        jobs = Jobs(
-            job=form.job.data,
-            team_leader=form.team_leader.data,
-            work_size=form.work_size.data,
-            collaborators=form.collaborators.data
-        )
-        db_sess.add(jobs)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('adding_job.html',
-                           message="Неправильный логин или пароль",
-                           form=form)
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
@@ -175,6 +157,33 @@ def reqister():
     return render_template('register_2.html', title='Регистрация', form=form)
 
 
+@app.route('/adding_job', methods=['GET', 'POST'])
+def adding_job():
+    form = AddJobForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        # jobs = Jobs(
+        #     job = form.job.data,
+        #     team_leader = form.team_leader.data,
+        #     work_size = form.work_size.data,
+        #     collaborators = form.collaborators.data,
+        #     is_finished = form.is_finished.data)
+        jobs = Jobs()
+        jobs.job = form.job.data
+        jobs.team_leader = form.team_leader.data
+        jobs.collaborators = form.collaborators.data
+        jobs.work_size = form.work_size.data
+        jobs.is_finished = form.is_finished.data
+        current_user.jobs.append(jobs)
+        db_sess.merge(current_user)
+        # db_sess.add(jobs)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('adding_job.html', title='Добавление новости',
+                           form=form)
+
+
+
 @app.route('/news',  methods=['GET', 'POST'])
 @login_required
 def add_news():
@@ -191,6 +200,43 @@ def add_news():
         return redirect('/')
     return render_template('news.html', title='Добавление новости',
                            form=form)
+
+@app.route('/jobs/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_jobs(id):
+    form = AddJobForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user
+                                          ).first()
+        if jobs:
+            form.job.data = jobs.job
+            form.team_leader.data = jobs.team_leader
+            form.work_size.data = jobs.work_size
+            form.collaborators.data = jobs.collaborators
+            form.is_finished.data = jobs.is_finished
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user
+                                          ).first()
+        if jobs:
+            jobs.job = form.job.data
+            jobs.team_leader = form.team_leader.data
+            jobs.work_size = form.work_size.data
+            jobs.collaborators = form.collaborators.data
+            jobs.is_finished = form.is_finished.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('adding_job.html',
+                           title='Редактирование работы',
+                           form=form
+                           )
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -224,6 +270,20 @@ def edit_news(id):
                            title='Редактирование новости',
                            form=form
                            )
+
+@app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def jobs_delete(id):
+    db_sess = db_session.create_session()
+    jobs = db_sess.query(Jobs).filter(Jobs.id == id,
+                                      Jobs.user == current_user
+                                      ).first()
+    if jobs:
+        db_sess.delete(jobs)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
 
 @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
