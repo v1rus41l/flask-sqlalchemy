@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добавление работы</h1>
+{% for item in jobs%}
+    <h2>Работа #{{ item.id }}</h2>
+    <table border="2">
+        <tr bgcolor="gray">
+            <td>Название работы</td>
+            <td>Ответственный</td>
+            <td>Продолжительность</td>
+            <td>Список id команд</td>
+            <td>Завершена или нет</td>
+        </tr>
+        <tr>
+            <td>{{ item.job }}</td>
+            <td>{{ item.team_leader }}</td>
+            <td>{{ item.work_size }}</td>
+            <td>{{ item.collaborators }}</td>
+            {% if item.is_finished %}
+                <td>Завершена</td>
+            {% else %}
+                <td>Не завершена</td>
+            {% endif %}
+        </tr>
+    </table>
+{% endfor %}
+{% endblock %}
