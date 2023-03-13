@@ -12,11 +12,27 @@ from forms.user import RegisterForm
 from data.users import User
 from data.news import News
 from data.job_form import AddJobForm
+from flask_restful import reqparse, abort, Api, Resource
+from data import news_resources
+from data import users_resources
 
 app = Flask(__name__)
+api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# для списка объектов
+api.add_resource(news_resources.NewsListResource, '/api/v2/news')
+
+# для одного объекта
+api.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
+
+# для списка объектов
+api.add_resource(users_resources.UsersListResource, '/api/v2/users')
+
+# для одного объекта
+api.add_resource(users_resources.UsersResource, '/api/v2/users/<int:user_id>')
 
 from flask import make_response
 
