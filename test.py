@@ -2,36 +2,38 @@ import datetime
 
 from requests import get, post, delete
 
-print(get('http://localhost:5000/api/v2/users').json())
+print(get('http://localhost:5000/api/v2/jobs').json())
 
-print(get('http://localhost:5000/api/v2/users/1').json())
+print(get('http://localhost:5000/api/v2/jobs/1').json())
 
-print(get('http://localhost:5000/api/v2/users/999').json())
-# при условии, что пользователя с id = 999 нет в базе
+print(get('http://localhost:5000/api/v2/jobs/999').json())
+# при условии, что работы с id = 999 нет в базе
 
-print(get('http://localhost:5000/api/v2/users/q').json())
+print(get('http://localhost:5000/api/v2/jobs/q').json())
 
 # корректный запрос
-print(post('http://localhost:5000/api/v2/users',
-           json={'name': 'Scott',
-                 'about': 'want to be a programmer',
-                 'email': 'test23@mail.ru'}).json())
+print(post('http://localhost:5000/api/v2/jobs',
+           json={'team_leader': 2,
+                 'job': 'engine repairing',
+                 'collaborators': '2, 3',
+                 'work_size': 24,
+                 'is_finished': False}).json())
 
 # некорректный: пустой запрос
-print(post('http://localhost:5000/api/v2/users').json())
+print(post('http://localhost:5000/api/v2/jobs').json())
 
-# некорректный: передано только имя
-print(post('http://localhost:5000/api/v2/users',
-           json={'name': 'Scott Jerard'}).json())
+# некорректный: передано только название работы
+print(post('http://localhost:5000/api/v2/jobs',
+           json={'jobs': 'engine repairing'}).json())
 
 # корректный запрос
-print(delete('http://localhost:5000/api/v2/users/3').json())
+print(delete('http://localhost:5000/api/v2/jobs/3').json())
 
 # некорректный: новости с id = 999 нет в базе
-print(delete('http://localhost:5000/api/v2/users/999').json())
+print(delete('http://localhost:5000/api/v2/jobs/999').json())
 
 # некорректный: неверный формат id
-print(delete('http://localhost:5000/api/v2/users/q').json())
+print(delete('http://localhost:5000/api/v2/jobs/q').json())
 
 # некорректный: пустой запрос
-print(delete('http://localhost:5000/api/v2/users/users/q').json())
+print(delete('http://localhost:5000/api/v2/jobs').json())

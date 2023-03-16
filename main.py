@@ -15,6 +15,7 @@ from data.job_form import AddJobForm
 from flask_restful import reqparse, abort, Api, Resource
 from data import news_resources
 from data import users_resources
+from data import jobs_resource
 
 app = Flask(__name__)
 api = Api(app)
@@ -33,6 +34,12 @@ api.add_resource(users_resources.UsersListResource, '/api/v2/users')
 
 # для одного объекта
 api.add_resource(users_resources.UsersResource, '/api/v2/users/<int:user_id>')
+
+# для списка объектов
+api.add_resource(jobs_resource.JobsListResource, '/api/v2/jobs')
+
+# для одного объекта
+api.add_resource(jobs_resource.JobsResource, '/api/v2/jobs/<int:jobs_id>')
 
 from flask import make_response
 
