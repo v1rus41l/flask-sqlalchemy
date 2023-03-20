@@ -230,8 +230,7 @@ def edit_jobs(id):
     form = AddJobForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        jobs = db_sess.query(Jobs).filter(Jobs.id == id,
-                                          Jobs.user == current_user
+        jobs = db_sess.query(Jobs).filter(Jobs.id == id
                                           ).first()
         if jobs:
             form.job.data = jobs.job
@@ -298,8 +297,7 @@ def edit_news(id):
 @login_required
 def jobs_delete(id):
     db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).filter(Jobs.id == id,
-                                      Jobs.user == current_user
+    jobs = db_sess.query(Jobs).filter(Jobs.id == id
                                       ).first()
     if jobs:
         db_sess.delete(jobs)
